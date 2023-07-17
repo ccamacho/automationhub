@@ -1,0 +1,5 @@
+**/__pycache__
+ccamacho/automationhub/releases/
+/docs/src/_build/*
+/.venv
+/local

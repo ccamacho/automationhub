@@ -1,0 +1,56 @@
+---
+name: build
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    if: github.repository_owner == 'ccamacho'
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.9,3.11]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install jq -y
+          sudo apt-get remove ansible -y
+          sudo locale-gen en_US.UTF-8
+          sudo dpkg-reconfigure locales
+          sudo apt install build-essential findutils -y
+          sudo apt-get --purge autoremove python3-pip
+          sudo apt install python3-pip
+          sudo python3 -m pip uninstall ansible ansible-base ansible-core -y
+          sudo python3 -m pip install --upgrade pip
+          sudo python3 -m pip install --upgrade virtualenv
+          sudo python3 -m pip install --upgrade setuptools
+          sudo python3 -m pip install -r test-requirements.txt
+      - name: Build the collection
+        run: |
+          cd ccamacho/automationhub/; ansible-galaxy collection build -v --force --output-path releases/
+      - name: Install the collection
+        run: |
+          cd ccamacho/automationhub/; ansible-galaxy collection install releases/ccamacho-automationhub-1.0.0.tar.gz --force
+
+      - name: Test the collection (get_namespace error)
+        run: |
+          cd ccamacho/automationhub/;
+          ansible-playbook ./playbooks/get_namespace_error.yml -vvvvv || true
+
+      - name: Test the collection (get_namespace dontexists)
+        run: |
+          cd ccamacho/automationhub/;
+          GALAXY_KEY=${{ secrets.GALAXY_KEY }} ansible-playbook ./playbooks/get_namespace_dontexists.yml -vvvvv
+
+      - name: Test the collection (get_namespace success)
+        run: |
+          cd ccamacho/automationhub/;
+          GALAXY_KEY=${{ secrets.GALAXY_KEY }} ansible-playbook ./playbooks/get_namespace_success.yml -vvvvv

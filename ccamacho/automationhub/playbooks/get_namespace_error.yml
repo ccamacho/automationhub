@@ -1,0 +1,8 @@
+- name: 'Run the tests'
+  hosts: localhost
+  tasks:
+    - name: Get a namespace
+      ccamacho.automationhub.get_namespace:
+        api_server: "https://galaxy.ansible.com"
+        token: "thisisatoken"
+        namespace: "kubeinitnonono"
