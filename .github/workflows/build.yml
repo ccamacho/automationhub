@@ -33,12 +33,18 @@ jobs:
           sudo python3 -m pip install --upgrade virtualenv
           sudo python3 -m pip install --upgrade setuptools
           sudo python3 -m pip install -r test-requirements.txt
-      - name: Build the collection
+
+      - name: Build and install the collection
         run: |
-          cd ccamacho/automationhub/; ansible-galaxy collection build -v --force --output-path releases/
-      - name: Install the collection
+          pwd
+          cd ccamacho/automationhub/
+          ansible-galaxy collection build -v --force --output-path releases/
+          ansible-galaxy collection install releases/ccamacho-automationhub-1.0.0.tar.gz --force
+
+      - name: Test the collection (collection_build success)
         run: |
-          cd ccamacho/automationhub/; ansible-galaxy collection install releases/ccamacho-automationhub-1.0.0.tar.gz --force
+          cd ccamacho/automationhub/;
+          COLLECTION_LOCATION='/home/runner/work/automationhub/automationhub/ccamacho/automationhub/' ansible-playbook ./playbooks/collection_build.yml -vvvvv
 
       - name: Test the collection (get_namespace error)
         run: |

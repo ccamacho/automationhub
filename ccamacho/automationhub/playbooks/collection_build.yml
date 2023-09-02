@@ -1,0 +1,8 @@
+- name: 'Run the tests'
+  hosts: localhost
+  tasks:
+    - name: Build a collection
+      ccamacho.automationhub.collection_build:
+        input_path: "{{ lookup('ansible.builtin.env', 'COLLECTION_LOCATION', default=Undefined) }}" # Where galaxy.yml is
+        output_path: "releases" # The output folder in the input_path like input_path/output/path/
+        force: True

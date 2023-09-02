@@ -21,9 +21,14 @@ from ansible_collections.ccamacho.automationhub.plugins.plugin_utils.automationh
 
 argument_spec = {}
 argument_spec.update(dict(
-    api_server=dict(type="str"),
+    input_path=dict(type="str"),
+    output_path=dict(type="str"),
+    timeout=dict(type="str"),
     token=dict(type="str"),
-    namespace=dict(type="str"),
+    api_key=dict(type="str"),
+    ignore_certs=dict(type="str"),
+    force=dict(type="str"),
+    server=dict(type="str"),
 ))
 
 required_if = []
@@ -59,9 +64,14 @@ class ActionModule(ActionBase):
 
     def get_collection_params(self, params):
         new_object = dict(
-            api_server=params.get("api_server"),
+            input_path=params.get("input_path"),
+            output_path=params.get("output_path"),
+            timeout=params.get("timeout"),
             token=params.get("token"),
-            namespace=params.get("namespace"),
+            api_key=params.get("api_key"),
+            ignore_certs=params.get("ignore_certs"),
+            force=params.get("force"),
+            server=params.get("server"),
         )
         return new_object
 
@@ -72,7 +82,7 @@ class ActionModule(ActionBase):
         self._check_argspec()
 
         galaxy = AutomationHub(options=self.get_collection_params(self._task.args))
-        galaxy.get_namespace()
+        galaxy.collection_build()
 
         self._result.update(dict(asdf="executed"))
 

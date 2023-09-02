@@ -1,0 +1,13 @@
+- name: 'Run the tests'
+  hosts: localhost
+  tasks:
+    - name: Publish a collection
+      ccamacho.automationhub.collection_publish:
+        collection_tarball: "../../../"
+        import_timeout: 10
+        no_wait: False
+        timeout: 10
+        token: 'This is a token'
+        api_key: 'asdfasdf'
+        ignore_certs: True
+        server: 'galaxy.ansible.com'

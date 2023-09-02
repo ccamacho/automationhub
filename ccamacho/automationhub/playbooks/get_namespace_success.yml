@@ -5,4 +5,4 @@
       ccamacho.automationhub.get_namespace:
         api_server: "https://galaxy.ansible.com"
         token: "{{ lookup('ansible.builtin.env', 'GALAXY_KEY', default=Undefined) }}"
-        namespace: "kubeinit"
+        namespace: "kubeinit"  # this can be a namespace or a repo like ccamacho/kubeinit
