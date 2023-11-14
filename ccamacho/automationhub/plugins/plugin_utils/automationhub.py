@@ -8,6 +8,8 @@ import yaml
 from collections import namedtuple
 from ansible.galaxy.api import GalaxyAPI
 from ansible.galaxy.api import _urljoin
+
+from ansible.cli.galaxy import GalaxyCLI
 from ansible.galaxy.token import GalaxyToken
 from ansible.galaxy.role import GalaxyRole
 from ansible.errors import AnsibleError, AnsibleOptionsError
@@ -62,7 +64,8 @@ class AutomationHub(object):
         build a collection
         """
         try:
-            build_collection(self.options.input_path, self.options.output_path, True)
+            in_path = GalaxyCLI._resolve_path(self.options.input_path)
+            build_collection(in_path, self.options.output_path, True)
             return True
         except Exception as error:
             raise AnsibleError("collection_build failed with: %s" % (error))

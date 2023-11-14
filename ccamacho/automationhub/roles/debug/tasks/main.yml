@@ -1,0 +1,5 @@
+- name: Print message
+  ansible.builtin.debug:
+    msg:
+    - "This is an example message"
+    - "Here it goes: {{ message }}."
