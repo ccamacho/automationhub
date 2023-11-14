@@ -11,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.9,3.11]
+        python-version: [3.11]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -34,29 +34,7 @@ jobs:
           sudo python3 -m pip install --upgrade setuptools
           sudo python3 -m pip install -r test-requirements.txt
 
-      - name: Build and install the collection
+      - name: Create collection build and publish
         run: |
-          pwd
-          cd ccamacho/automationhub/
-          ansible-galaxy collection build -v --force --output-path releases/
-          ansible-galaxy collection install releases/ccamacho-automationhub-1.0.0.tar.gz --force
-
-      - name: Test the collection (collection_build success)
-        run: |
-          cd ccamacho/automationhub/;
-          COLLECTION_LOCATION='/home/runner/work/automationhub/automationhub/ccamacho/automationhub/' ansible-playbook ./playbooks/collection_build.yml -vvvvv
-
-      - name: Test the collection (get_namespace error)
-        run: |
-          cd ccamacho/automationhub/;
-          ansible-playbook ./playbooks/get_namespace_error.yml -vvvvv || true
-
-      - name: Test the collection (get_namespace dontexists)
-        run: |
-          cd ccamacho/automationhub/;
-          GALAXY_KEY=${{ secrets.GALAXY_KEY }} ansible-playbook ./playbooks/get_namespace_dontexists.yml -vvvvv
-
-      - name: Test the collection (get_namespace success)
-        run: |
-          cd ccamacho/automationhub/;
-          GALAXY_KEY=${{ secrets.GALAXY_KEY }} ansible-playbook ./playbooks/get_namespace_success.yml -vvvvv
+          chmod +x ./ci/release.sh
+          sudo GALAXY_KEY=${{ secrets.GALAXY_KEY }} ./ci/release.sh
